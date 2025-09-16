@@ -1,0 +1,135 @@
+ @import url('https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bungee+Inline&family=Luxurious+Roman&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Doto:wght@100..900&display=swap');
+@import "tailwindcss";
+
+* {
+    font-family: "Libertinus Serif", serif;
+}
+
+
+
+@theme {
+    --color-primary: #7e16f5;
+}
+
+/* ===== Global Styles ===== */
+html {
+  scroll-behavior: smooth; /* Smooth scrolling */
+  scroll-padding-top: 80px; /* If you have a fixed navbar */
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #0a0014; /* Dark background */
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Headings ===== */
+h1, h2, h3, h4, h5, h6 {
+  scroll-margin-top: 80px; /* Prevent heading from hiding behind navbar */
+}
+
+/* ===== Links ===== */
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: #ec4899;
+}
+
+/* ===== Glowing Effects ===== */
+.heading-glow {
+  animation: headingGlow 3s infinite ease-in-out;
+}
+
+@keyframes headingGlow {
+  0%, 100% {
+    text-shadow: 0 0 6px rgba(255,255,255,0.6),
+                 0 0 12px rgba(167,139,250,0.5),
+                 0 0 18px rgba(147,51,234,0.4);
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(255,255,255,0.8),
+                 0 0 20px rgba(167,139,250,0.6),
+                 0 0 30px rgba(147,51,234,0.5);
+  }
+}
+
+/* Paragraph Glow */
+.paragraph-glow {
+  animation: paragraphGlow 3s infinite ease-in-out;
+}
+
+@keyframes paragraphGlow {
+  0%, 100% {
+    text-shadow: 0 0 2px rgba(167,139,250,0.3),
+                 0 0 4px rgba(236,72,153,0.2);
+  }
+  50% {
+    text-shadow: 0 0 4px rgba(167,139,250,0.4),
+                 0 0 8px rgba(236,72,153,0.3);
+  }
+}
+
+/* ===== Smooth Scrollbar (optional) ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0014;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #7e22ce;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ec4899;
+}
+
+/* ===== Cards & Hover Effects ===== */
+.card-glow {
+  transition: all 0.5s ease;
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+}
+
+.card-glow:hover {
+  transform: translateY(-4px) rotateX(2deg) rotateY(2deg);
+  box-shadow: 0 0 20px #a855f7, 0 0 30px #ec4899;
+}
+
+/* ===== Button Glows ===== */
+.button-glow {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.button-glow::before {
+  content: '';
+  position: absolute;
+  top: -4px; left: -4px; right: -4px; bottom: -4px;
+  background: linear-gradient(45deg, #a855f7, #ec4899);
+  border-radius: 0.5rem;
+  filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.button-glow:hover::before {
+  opacity: 1;
+}
+
+.button-glow:hover {
+  background: #7e22ce;
+}
