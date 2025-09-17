@@ -1,41 +1,48 @@
 import React from "react";
 import { assets } from "../assets/assets";
+import { motion } from "framer-motion";
 
 const userCreations = [
-  {
-    img: assets.sunset,
-    title: "Sunset Over Mountains",
-    tool: "AI Image Generation",
-    user: "Alice",
-  },
-  {
-    img: assets.cityscape,
-    title: "Futuristic Cityscape",
-    tool: "AI Image Generation",
-    user: "Bob",
-  },
-  {
-    img: assets.portrait,
-    title: "AI Art Portrait",
-    tool: "AI Image Generation",
-    user: "Charlie",
-  },
-  {
-    img: assets.ninja,
-    title: "Ninja Holding Blade with Aesthetic Background",
-    tool: "AI Image Generation",
-    user: "David",
-  },
+  { img: assets.sunset, title: "Sunset Over Mountains", tool: "AI Image Generation", user: "Alice" },
+  { img: assets.cityscape, title: "Futuristic Cityscape", tool: "AI Image Generation", user: "Bob" },
+  { img: assets.portrait, title: "AI Art Portrait", tool: "AI Image Generation", user: "Charlie" },
+  { img: assets.ninja, title: "Ninja Holding Blade with Aesthetic Background", tool: "AI Image Generation", user: "David" },
 ];
 
 const FeatureShowcase = () => {
+  // Card animation variants
+  const cardVariants = {
+    hidden: (index) => ({
+      opacity: 0,
+      x: index % 2 === 0 ? -100 : 100, // alternate left/right
+      y: 40,
+      scale: 0.9,
+    }),
+    visible: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.9,
+        ease: "easeOut",
+      },
+    },
+  };
+
   return (
     <div
       className="px-4 sm:px-20 xl:px-32 py-24 w-full
         bg-gradient-to-br from-black via-[#0a0014] to-black relative"
     >
       {/* Section Title */}
-      <div className="text-center mb-12">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        viewport={{ once: true }}
+        className="text-center mb-12"
+      >
         <h2
           className="text-[42px] font-semibold text-transparent bg-clip-text 
                      bg-gradient-to-r from-purple-600 via-pink-200 to-purple-600"
@@ -55,15 +62,23 @@ const FeatureShowcase = () => {
         >
           See what’s possible with our AI tools and get inspired
         </p>
-      </div>
+      </motion.div>
 
       {/* Cards */}
-      <div className="flex flex-wrap lg:flex-nowrap justify-center gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {userCreations.map((item, index) => (
-          <div key={index} className="relative group w-full sm:w-1/2 lg:w-1/4">
+          <motion.div
+            key={index}
+            custom={index}
+            variants={cardVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.3 }}
+            transition={{ delay: index * 0.1 }}
+            className="relative group w-full"
+          >
             {/* Animated Gradient Glow */}
-            <div className="absolute inset-0 rounded-2xl blur-3xl opacity-30 
-                            animate-gradientGlow group-hover:opacity-70 transition-opacity duration-500"></div>
+            <div className="absolute inset-0 rounded-2xl blur-3xl opacity-30 animate-gradientGlow transition-opacity duration-500"></div>
 
             {/* Card */}
             <div
@@ -77,7 +92,7 @@ const FeatureShowcase = () => {
                 <img
                   src={item.img}
                   alt={item.title}
-                  className="w-full h-56 object-cover object-top rounded-xl hover:scale-105 transition-transform duration-300"
+                  className="w-full h-56 object-cover object-top rounded-xl transition-transform duration-300"
                 />
                 <div className="absolute bottom-0 w-full h-20 bg-gradient-to-t from-black to-transparent"></div>
               </div>
@@ -89,7 +104,7 @@ const FeatureShowcase = () => {
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 

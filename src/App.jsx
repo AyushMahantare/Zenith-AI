@@ -10,9 +10,13 @@ import RemoveBackground from './pages/RemoveBackground.jsx'
 import RemoveObjects from './pages/RemoveObjects.jsx'
 import ReviewResume from './pages/ReviewResume.jsx'
 import Community from './pages/Community.jsx'
+
+
 const App = () => {
   return (  
     <div className='min-h-screen bg-black text-white'>
+    
+
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/ai' element={<Layout />}>
@@ -24,8 +28,6 @@ const App = () => {
           <Route path='remove-object' element={<RemoveObjects />} />
           <Route path='review-resume' element={<ReviewResume />} />
           <Route path='community' element={<Community />} />
-
-
         </Route>
       </Routes>
     </div>

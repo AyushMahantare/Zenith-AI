@@ -1,11 +1,11 @@
 import React from 'react'
 
-const BlogTitles = () => {
-    return (
-        <div>
-            <h1>BlogTitles</h1>
-        </div>
-    )
+function BlogTitles() {
+  return (
+    <div>
+      
+    </div>
+  )
 }
 
 export default BlogTitles

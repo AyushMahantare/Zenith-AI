@@ -2,11 +2,43 @@ import React, { useState } from 'react';
 import Spline from '@splinetool/react-spline';
 import bgVideo from '../assets/bgVideo.mp4';
 import { useNavigate } from 'react-router-dom';
+import { motion } from "framer-motion";
 import { assets } from '../assets/assets';
 
 const Hero = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+
+  // Smooth floating animation (Spline)
+  const floatAnim = {
+    hidden: { opacity: 0, y: 40, rotate: 0 },
+    visible: {
+      opacity: 1,
+      y: [0, -20, 0],
+      rotate: [0, 2, -2, 0],
+      transition: {
+        duration: 8,
+        repeat: Infinity,
+        repeatType: "mirror",   // makes the loop soft
+        ease: "easeInOut",
+      },
+    },
+  };
+
+  // Smooth floating animation (h1 heading)
+  const headingFloat = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: [0, -10, 0],
+      transition: {
+        duration: 6,
+        repeat: Infinity,
+        repeatType: "mirror",
+        ease: "easeInOut",
+      },
+    },
+  };
 
   return (
     <div className="relative w-full min-h-screen px-4 sm:px-10 md:px-20 xl:px-32 flex flex-col justify-center items-center overflow-hidden">
@@ -21,11 +53,16 @@ const Hero = () => {
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
       />
 
-      {/* Black Overlay for readability */}
+      {/* Black Overlay */}
       <div className="absolute top-0 left-0 w-full h-full bg-black/30 z-0"></div>
 
-      {/* Spline 3D Scene */}
-      <div className="absolute bottom-2 right-2 w-40 h-40 sm:w-56 sm:h-56 md:w-72 md:h-72 xl:w-96 xl:h-96 pointer-events-none z-10">
+      {/* Floating Spline */}
+      <motion.div
+        variants={floatAnim}
+        initial="hidden"
+        animate="visible"
+        className="absolute bottom-2 right-2 w-40 h-40 sm:w-56 sm:h-56 md:w-72 md:h-72 xl:w-96 xl:h-96 pointer-events-none z-10"
+      >
         {loading && (
           <div className="text-white text-center text-xs sm:text-sm">Loading 3D...</div>
         )}
@@ -33,14 +70,22 @@ const Hero = () => {
           scene="https://prod.spline.design/VGkoJTRi3hE2EVUw/scene.splinecode"
           onLoad={() => setLoading(false)}
         />
-      </div>
+      </motion.div>
 
       {/* Text Content */}
       <div className="relative z-20 text-center text-white max-w-3xl w-full px-2 sm:px-4">
 
-        {/* Glass Box (only around text) */}
-        <div className="px-4 sm:px-6 py-6 sm:py-8 rounded-2xl inline-block glass-effect w-full sm:w-auto">
-          <h1
+        {/* Glass Box */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+          className="px-4 sm:px-6 py-6 sm:py-8 rounded-2xl inline-block glass-effect w-full sm:w-auto"
+        >
+          <motion.h1
+            variants={headingFloat}
+            initial="hidden"
+            animate="visible"
             className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl font-medium mx-auto leading-snug heading-glow"
             style={{ fontFamily: "'Doto', sans-serif" }}
           >
@@ -48,7 +93,8 @@ const Hero = () => {
             <span className="text-purple-400 font-medium" style={{ fontFamily: "'Doto', sans-serif" }}>
               AI tools
             </span>
-          </h1>
+          </motion.h1>
+
           <p
             className="mt-3 sm:mt-4 max-w-xs sm:max-w-lg lg:max-w-xl m-auto text-xs sm:text-sm md:text-base paragraph-glow"
             style={{ fontFamily: "'Libertinus', sans-serif" }}
@@ -56,10 +102,15 @@ const Hero = () => {
             Transform your content creation with our suite of premium AI tools.
             Write articles, generate images, and enhance your workflow.
           </p>
-        </div>
+        </motion.div>
 
         {/* Buttons */}
-        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-xs sm:text-sm md:text-base mt-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.5, duration: 1, ease: "easeOut" }}
+          className="flex flex-wrap justify-center gap-3 sm:gap-4 text-xs sm:text-sm md:text-base mt-6"
+        >
           <button
             onClick={() => navigate('/ai')}
             className="bg-transparent font-extrabold text-white px-6 sm:px-8 md:px-10 py-2 sm:py-3 rounded-lg hover:scale-105 active:scale-95 transition cursor-pointer glow-btn border-purple-400 border-2"
@@ -73,16 +124,19 @@ const Hero = () => {
           >
             Watch Demo
           </button>
-        </div>
+        </motion.div>
 
         {/* Trusted Section */}
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 1, ease: "easeOut" }}
           className="flex items-center gap-2 sm:gap-4 mt-6 sm:mt-8 mx-auto text-gray-200 justify-center text-xs sm:text-sm md:text-base"
           style={{ fontFamily: "'Doto', sans-serif" }}
         >
           <img src={assets.user_group} alt="user group" className="h-6 sm:h-8" />
           <span>Trusted by 10K people</span>
-        </div>
+        </motion.div>
       </div>
 
       {/* Glow + Glass Styles */}

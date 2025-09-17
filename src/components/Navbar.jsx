@@ -36,7 +36,7 @@ const Navbar = () => {
   return (
     <div
       className={`fixed top-0 left-0 w-full z-50 flex items-center justify-between 
-      py-2 px-3 sm:px-12 xl:px-20 transition-all duration-500
+      py-5 px-3 sm:px-12 xl:px-20 transition-all duration-500
       ${isScrolled ? 'bg-black/40 backdrop-blur-md shadow-md' : 'bg-transparent'}
       ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}
     >
@@ -44,8 +44,8 @@ const Navbar = () => {
       <img
         src={assets.logo}
         alt="logo"
-        className="w-24 sm:w-36 cursor-pointer transition-all duration-300
-                   hover:shadow-[0_0_5px_#a78bfa,0_0_10px_#a78bfa,0_0_15px_#a78bfa]"
+        className="w-28 sm:w-36 cursor-pointer transition-all duration-300
+                   "
         onClick={() => navigate('/')}
       />
 
