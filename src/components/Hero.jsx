@@ -4,6 +4,7 @@ import bgVideo from '../assets/bgVideo.mp4';
 import { useNavigate } from 'react-router-dom';
 import { motion } from "framer-motion";
 import { assets } from '../assets/assets';
+import { useClerk, useUser } from "@clerk/clerk-react";
 
 const Hero = () => {
   const navigate = useNavigate();

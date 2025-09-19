@@ -1,17 +1,17 @@
-import { Edit, Sparkles } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { Edit, Sparkles } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 const WriteArticle = () => {
   const articleLength = [
-    { length: 800, text: 'Short(500-800 words)' },
-    { length: 1200, text: 'Medium(800-1200 words)' },
-    { length: 1600, text: 'Long(1200+ words)' },
+    { length: 800, text: "Short(500-800 words)" },
+    { length: 1200, text: "Medium(800-1200 words)" },
+    { length: 1600, text: "Long(1200+ words)" },
   ];
 
   const [selectedLength, setSelectedLength] = useState(articleLength[0]);
-  const [input, setInput] = useState('');
-  const [generatedArticle, setGeneratedArticle] = useState('');
+  const [input, setInput] = useState("");
+  const [generatedArticle, setGeneratedArticle] = useState("");
   const [particles, setParticles] = useState([]);
 
   useEffect(() => {
@@ -31,14 +31,12 @@ const WriteArticle = () => {
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
-    // For now, we just use the input as the "generated article"
-    setGeneratedArticle(input || 'This is a sample generated article.');
-    setInput(''); // optional: clear input after generating
+    setGeneratedArticle(input || "This is a sample generated article.");
+    setInput("");
   };
 
   return (
     <div className="relative h-full overflow-y-scroll p-6 flex flex-wrap gap-8 justify-center bg-gradient-to-b from-black via-[#0a0014] to-black">
-
       {/* Particle Background */}
       <div className="absolute inset-0 pointer-events-none">
         {particles.map((p) => (
@@ -69,8 +67,9 @@ const WriteArticle = () => {
         onSubmit={onSubmitHandler}
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className="relative w-full max-w-lg p-6 bg-black/20 backdrop-blur-xl border border-white/20 rounded-2xl text-white shadow-lg z-10"
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="relative w-full max-w-lg p-6  backdrop-blur-xl border border-transparent rounded-3xl text-white shadow-lg z-10 
+        bg-transparent bg-clip-padding hover:shadow-[0_0_20px_#a855f7]"
       >
         <div className="flex items-center gap-3">
           <Sparkles className="w-6 text-[#a855f7]" />
@@ -90,21 +89,36 @@ const WriteArticle = () => {
         />
 
         <p className="mt-4 text-sm font-medium">Article Length</p>
-        <div className="mt-3 flex gap-3 font-medium">
+        <motion.div
+          className="mt-3 flex gap-3 font-medium flex-wrap"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.15 } },
+          }}
+        >
           {articleLength.map((item, index) => (
-            <span
+            <motion.span
+              key={index}
               onClick={() => setSelectedLength(item)}
               className={`text-xs px-4 py-1 border rounded-full cursor-pointer transition-all duration-300 ${
                 selectedLength.text === item.text
-                  ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 text-white shadow-[0_0_10px_#a855f7]'
-                  : 'text-gray-400 border-gray-500 hover:bg-white/10 hover:text-white'
+                  ? "bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 text-white shadow-[0_0_10px_#a855f7]"
+                  : "text-gray-400 border-gray-500 hover:bg-white/10 hover:text-white"
               }`}
-              key={index}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              whileHover={{ scale: 1.05, y: -3 }}
+              whileTap={{ scale: 0.95 }}
             >
               {item.text}
-            </span>
+            </motion.span>
           ))}
-        </div>
+        </motion.div>
 
         <button
           type="submit"
@@ -119,8 +133,9 @@ const WriteArticle = () => {
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-        className="relative w-full max-w-lg p-6 bg-black/20 backdrop-blur-xl border border-white/20 rounded-2xl text-white shadow-lg flex flex-col min-h-[400px] justify-between z-10"
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+        className="relative w-full max-w-lg p-6 backdrop-blur-xl border border-transparent rounded-3xl text-white shadow-lg flex flex-col min-h-[400px] justify-between z-10 
+        bg-transparent bg-clip-padding hover:shadow-[0_0_20px_#a855f7]"
       >
         <div className="flex items-center gap-3 mb-4">
           <Edit className="w-5 h-5 text-[#a855f7]" />
@@ -145,29 +160,46 @@ const WriteArticle = () => {
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut", delay: 0.4 }}
-        className="w-full max-w-4xl p-8 bg-black/20 backdrop-blur-xl border border-white/20 rounded-2xl text-white shadow-lg flex flex-col gap-6 z-10"
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
+        className="w-full max-w-4xl p-8 bg-transparent backdrop-blur-xl border border-transparent rounded-2xl text-white shadow-lg flex flex-col gap-6 z-10 
+         bg-clip-padding hover:shadow-[0_0_20px_#a855f7]"
       >
         <h2 className="text-3xl font-semibold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent">
           How Can an AI Article Writer Help You?
         </h2>
         <div className="grid sm:grid-cols-2 gap-6 text-gray-300">
-          <div className="p-4 bg-black/30 rounded-xl border border-white/10 hover:shadow-[0_0_15px_#a855f7] transition-all duration-300">
-            <h3 className="font-semibold text-lg mb-2 text-white">Save Time</h3>
-            <p>Generate high-quality content in minutes, allowing you to focus on strategy and research instead of writing from scratch.</p>
-          </div>
-          <div className="p-4 bg-black/30 rounded-xl border border-white/10 hover:shadow-[0_0_15px_#a855f7] transition-all duration-300">
-            <h3 className="font-semibold text-lg mb-2 text-white">Boost Creativity</h3>
-            <p>Get fresh ideas and perspectives on your topic, helping you overcome writer’s block and maintain originality.</p>
-          </div>
-          <div className="p-4 bg-black/30 rounded-xl border border-white/10 hover:shadow-[0_0_15px_#a855f7] transition-all duration-300">
-            <h3 className="font-semibold text-lg mb-2 text-white">SEO Optimization</h3>
-            <p>Create content structured for search engines to improve visibility and attract more readers organically.</p>
-          </div>
-          <div className="p-4 bg-black/30 rounded-xl border border-white/10 hover:shadow-[0_0_15px_#a855f7] transition-all duration-300">
-            <h3 className="font-semibold text-lg mb-2 text-white">Consistency</h3>
-            <p>Maintain a steady flow of articles without compromising on quality, ensuring your audience stays engaged.</p>
-          </div>
+          {[
+            {
+              title: "Save Time",
+              text: "Generate high-quality content in minutes, allowing you to focus on strategy and research instead of writing from scratch.",
+            },
+            {
+              title: "Boost Creativity",
+              text: "Get fresh ideas and perspectives on your topic, helping you overcome writer’s block and maintain originality.",
+            },
+            {
+              title: "SEO Optimization",
+              text: "Create content structured for search engines to improve visibility and attract more readers organically.",
+            },
+            {
+              title: "Consistency",
+              text: "Maintain a steady flow of articles without compromising on quality, ensuring your audience stays engaged.",
+            },
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut", delay: i * 0.1 }}
+              viewport={{ once: true }}
+              className="p-4 bg-black/30 rounded-xl border border-white/10 hover:shadow-[0_0_15px_#a855f7] transition-all duration-300"
+            >
+              <h3 className="font-semibold text-lg mb-2 text-white">
+                {item.title}
+              </h3>
+              <p>{item.text}</p>
+            </motion.div>
+          ))}
         </div>
       </motion.div>
 
@@ -175,8 +207,9 @@ const WriteArticle = () => {
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut", delay: 0.6 }}
-        className="w-full max-w-4xl p-8 bg-black/20 backdrop-blur-xl border border-white/20 rounded-2xl text-white shadow-lg flex flex-col gap-4 z-10"
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
+        className="w-full max-w-4xl p-8 bg-transparent backdrop-blur-xl border border-transparent rounded-2xl text-white shadow-lg flex flex-col gap-4 z-10 
+         bg-clip-padding hover:shadow-[0_0_20px_#a855f7]"
       >
         <h2 className="text-3xl font-semibold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent">
           Sample Article Generated
@@ -203,7 +236,6 @@ const WriteArticle = () => {
           )}
         </div>
       </motion.div>
-
     </div>
   );
 };
