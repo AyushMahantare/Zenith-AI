@@ -10,13 +10,12 @@ const userCreations = [
 ];
 
 const FeatureShowcase = () => {
-  // Card animation variants
   const cardVariants = {
     hidden: (index) => ({
       opacity: 0,
-      x: index % 2 === 0 ? -100 : 100, // alternate left/right
-      y: 40,
-      scale: 0.9,
+      x: index % 2 === 0 ? -30 : 30, // less horizontal shift
+      y: 15,                         // less vertical movement
+      scale: 0.98,                   // closer to final size
     }),
     visible: {
       opacity: 1,
@@ -24,7 +23,7 @@ const FeatureShowcase = () => {
       y: 0,
       scale: 1,
       transition: {
-        duration: 0.9,
+        duration: 0.5,               // faster entrance
         ease: "easeOut",
       },
     },
@@ -74,7 +73,7 @@ const FeatureShowcase = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: false, amount: 0.3 }}
-            transition={{ delay: index * 0.1 }}
+            transition={{ delay: index * 0.05 }} // less stagger
             className="relative group w-full"
           >
             {/* Animated Gradient Glow */}

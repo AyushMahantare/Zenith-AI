@@ -11,9 +11,16 @@ import RemoveBackground from './pages/RemoveBackground.jsx'
 import RemoveObjects from './pages/RemoveObjects.jsx'
 import ReviewResume from './pages/ReviewResume.jsx'
 import Community from './pages/Community.jsx'
-import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react"
+import { SignedIn, SignedOut, RedirectToSignIn, useAuth } from "@clerk/clerk-react"
+import { useEffect } from 'react'
 
 const App = () => {
+  const {getToken}= useAuth()
+  useEffect(()=>{
+           getToken().then((token)=>console.log(token));
+  },[])
+
+
   return (  
     <div className='min-h-screen bg-black text-white'>
       <Routes>

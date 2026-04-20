@@ -174,7 +174,7 @@ export const dummyPublishedCreationData = [
     id: 2,
     user_id: "user_2yMX02PRbyMtQK6PebpjnxvRNIA",
     prompt:
-      "Generate an image of A Boy Riding a bicycle on road and bicycle is from year 2201  in the style Anime style.",
+      "Generate an image of A Boy Riding a bicycle on road and bicycle is from year 2201 in the style Anime style.",
     content: ai_gen_img_2,
     type: "image",
     publish: true,
@@ -195,7 +195,65 @@ export const dummyPublishedCreationData = [
     publish: true,
     likes: ["user_2yaW5EHzeDfQbXdAJWYFnZo2bje"],
     created_at: "2025-06-23T11:29:23.351Z",
-    updated_at: "2025-06-23T11:29:44.434Z",
-    __v: 1,
+    updated_at: "2025-06-23T11:29:44.432Z",
+  },
+  {
+    id: 4,
+    user_id: "user_2yaW5EHzeDfQbXdAJWYFnZo2bje",
+    prompt:
+      "Generate an image of a peaceful sunset over the ocean with vibrant orange and pink skies in the style Realistic.",
+    content: sunset,
+    type: "image",
+    publish: true,
+    likes: [
+      "user_2yMX02PRbyMtQK6PebpjnxvRNIA",
+      "user_2yaW5EHzeDfQbXdAJWYFnZo2bje",
+      "user_2zbR9KLmxePQdYcBNWVoTj3kfAE",
+    ],
+    created_at: "2025-06-25T07:14:10.123Z",
+    updated_at: "2025-06-25T07:14:10.123Z",
+  },
+  {
+    id: 5,
+    user_id: "user_2zbR9KLmxePQdYcBNWVoTj3kfAE",
+    prompt:
+      "Generate an image of a futuristic neon-lit cityscape at night with flying cars in the style Cyberpunk.",
+    content: cityscape,
+    type: "image",
+    publish: true,
+    likes: [
+      "user_2yMX02PRbyMtQK6PebpjnxvRNIA",
+      "user_2zbR9KLmxePQdYcBNWVoTj3kfAE",
+    ],
+    created_at: "2025-06-27T15:42:33.891Z",
+    updated_at: "2025-06-27T15:42:33.891Z",
+  },
+  {
+    id: 6,
+    user_id: "user_2zbR9KLmxePQdYcBNWVoTj3kfAE",
+    prompt:
+      "Generate a cinematic portrait of a young woman with dramatic lighting in the style Photorealistic.",
+    content: portrait,
+    type: "image",
+    publish: true,
+    likes: ["user_2zbR9KLmxePQdYcBNWVoTj3kfAE"],
+    created_at: "2025-06-28T10:05:55.204Z",
+    updated_at: "2025-06-28T10:05:55.204Z",
+  },
+  {
+    id: 7,
+    user_id: "user_2yMX02PRbyMtQK6PebpjnxvRNIA",
+    prompt:
+      "Generate an image of a mysterious ninja standing on a rooftop in the rain in the style Dark Fantasy.",
+    content: ninja,
+    type: "image",
+    publish: true,
+    likes: [
+      "user_2yMX02PRbyMtQK6PebpjnxvRNIA",
+      "user_2yaW5EHzeDfQbXdAJWYFnZo2bje",
+      "user_2zbR9KLmxePQdYcBNWVoTj3kfAE",
+    ],
+    created_at: "2025-06-30T18:22:47.560Z",
+    updated_at: "2025-06-30T18:22:47.560Z",
   },
 ];
