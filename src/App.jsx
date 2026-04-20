@@ -16,9 +16,32 @@ import { useEffect } from 'react'
 
 const App = () => {
   const {getToken}= useAuth()
-  useEffect(()=>{
-           getToken().then((token)=>console.log(token));
-  },[])
+  // useEffect(()=>{
+  //          getToken().then((token)=>console.log(token));
+  // },[])
+
+  useEffect(() => {
+    const callAPI = async () => {
+      const token = await getToken();
+
+      const res = await fetch("http://localhost:3000/api/ai/generate-article", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          prompt: "Write about AI in healthcare",
+          length: 1000,
+        }),
+      });
+
+      const text = await res.text();
+      console.log(text);
+    };
+
+    callAPI();
+  }, []);
 
 
   return (  

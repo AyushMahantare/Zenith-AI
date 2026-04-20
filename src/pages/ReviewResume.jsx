@@ -1,11 +1,15 @@
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { FileText, FileCheck } from "lucide-react";
+import { useAuth } from "@clerk/clerk-react";
 
 const ReviewResume = () => {
+  const { getToken } = useAuth();
+
   const [fileName, setFileName] = useState("");
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [text, setText] = useState("");
 
   const fileInputRef = useRef(null);
 
@@ -13,28 +17,55 @@ const ReviewResume = () => {
     fileInputRef.current.click();
   };
 
+  // 📄 Upload (fake extraction for demo)
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     setFileName(file.name);
+
+    // ⚠️ Fake resume text (for demo)
+    setText(`
+      JavaScript React API project teamwork problem solving
+    `);
   };
 
-  const handleReview = () => {
-    if (!fileName) return;
+  // 🚀 API CALL
+  const handleReview = async () => {
+    if (!text) return;
 
-    setLoading(true);
+    try {
+      setLoading(true);
+      setResult(null);
 
-    // Dummy AI response
-    setTimeout(() => {
-      setResult(
-        "ATS Score: 78/100\n\nStrengths:\n- Good project section\n- Clean formatting\n\nImprovements:\n- Add measurable achievements\n- Include keywords like React, API\n- Improve summary section"
+      const token = await getToken();
+
+      const res = await fetch(
+        "http://localhost:3000/api/ai/review-resume",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ text }),
+        }
       );
+
+      const data = await res.json();
+
+      if (data.success) {
+        setResult(data.result);
+      }
+
+    } catch (err) {
+      console.log(err);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
-  // Background particles (same Zenith style)
+  // ✨ particles (UNCHANGED)
   const particles = Array.from({ length: 15 }).map((_, i) => ({
     id: i,
     x: Math.random() * 100,
@@ -79,7 +110,7 @@ const ReviewResume = () => {
         accept=".pdf"
       />
 
-      {/* LEFT CARD */}
+      {/* LEFT CARD (UNCHANGED UI) */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -114,7 +145,7 @@ const ReviewResume = () => {
         </button>
       </motion.div>
 
-      {/* RIGHT CARD */}
+      {/* RIGHT CARD (UPDATED CONTENT ONLY) */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -127,37 +158,48 @@ const ReviewResume = () => {
           Analysis Results
         </h1>
 
-        {result ? (
-          <pre className="text-gray-300 text-sm whitespace-pre-wrap text-left">
-            {result}
-          </pre>
-        ) : (
-          <div className="text-gray-400 text-sm space-y-4 text-left max-w-md">
+        {loading ? (
+          <p className="animate-pulse text-purple-400">
+            🤖 Analyzing resume...
+          </p>
+        ) : result ? (
+          <div className="text-sm text-left space-y-4 w-full">
 
-            <p className="text-center">
-              Upload a resume and click "Review Resume" to get started
+            <p className="text-lg">
+              ATS Score:{" "}
+              <span className="text-green-400">{result.score}%</span>
             </p>
 
-            <div className="mt-4 p-4 rounded-lg bg-black/30 border border-white/10">
-              <h2 className="text-purple-400 font-medium mb-2">
-                Example Analysis
-              </h2>
-
-              <p><span className="text-white font-medium">ATS Score:</span> 78/100</p>
-
-              <p className="mt-2 text-green-400 font-medium">Strengths:</p>
-              <ul className="list-disc ml-5">
-                <li>Good project section</li>
-                <li>Clean formatting</li>
-              </ul>
-
-              <p className="mt-2 text-red-400 font-medium">Improvements:</p>
-              <ul className="list-disc ml-5">
-                <li>Add measurable achievements</li>
-                <li>Include keywords (React, API)</li>
-              </ul>
+            <div>
+              <h3 className="text-green-400">Matched Keywords</h3>
+              {result.matched.map((k, i) => (
+                <span key={i} className="mr-2 text-xs bg-green-500/20 px-2 py-1 rounded">
+                  {k}
+                </span>
+              ))}
             </div>
+
+            <div>
+              <h3 className="text-red-400">Missing Keywords</h3>
+              {result.missing.map((k, i) => (
+                <span key={i} className="mr-2 text-xs bg-red-500/20 px-2 py-1 rounded">
+                  {k}
+                </span>
+              ))}
+            </div>
+
+            <div>
+              <h3 className="text-yellow-400">Issues Found</h3>
+              {result.mistakes.map((m, i) => (
+                <p key={i}>⚠ {m}</p>
+              ))}
+            </div>
+
           </div>
+        ) : (
+          <p className="text-gray-400 text-center">
+            Upload a resume and click "Review Resume" to get started
+          </p>
         )}
       </motion.div>
     </div>

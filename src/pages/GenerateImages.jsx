@@ -1,162 +1,172 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Sparkles, Image } from 'lucide-react';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Sparkles, Image } from "lucide-react";
+import { useAuth } from "@clerk/clerk-react";
 
 const GenerateImages = () => {
+  const { getToken } = useAuth();
+
+  const downloadImage = async (url, index) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `ai-image-${index + 1}.jpg`;
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error("Download failed", err);
+    }
+  };
+
   const imageStyle = [
-    'Realistic',
-    'Ghibli Style',
-    'Anime Style',
-    'Cartoon Style',
-    'Fantasy Style',
-    'Realistic Style',
-    '3D Style',
-    'Portrait Style',
+    "Realistic",
+    "Anime",
+    "Cartoon",
+    "Fantasy",
+    "3D",
+    "Portrait",
   ];
 
-  const [selectedStyle, setSelectedStyle] = useState('Realistic');
-  const [input, setInput] = useState('');
-  const [generatedImage, setGeneratedImage] = useState('');
-  const [publish, setPublish] = useState(false); // ✅ Added publish state
+  const [selectedStyle, setSelectedStyle] = useState("Realistic");
+  const [input, setInput] = useState("");
+  const [images, setImages] = useState([]); // 🔥 multiple images
+  const [loading, setLoading] = useState(false);
+  const [publish, setPublish] = useState(false);
 
+  // 🚀 GENERATE MULTIPLE IMAGES
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     if (!input) return;
-    // Dummy generated image text
-    setGeneratedImage(
-      `Generated Image for "${input}" in ${selectedStyle} style. ${
-        publish ? '(Public)' : '(Private)'
-      }`
-    );
-  };
 
-  // Dummy particles
-  const particles = Array.from({ length: 15 }).map((_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: 4 + Math.random() * 6,
-    delay: Math.random() * 5,
-  }));
+    try {
+      setLoading(true);
+      setImages([]);
+
+      const token = await getToken();
+
+      const res = await fetch("http://localhost:3000/api/ai/generate-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          prompt: input + " " + selectedStyle,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setImages(data.images); // 🔥 use backend images
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="relative h-full overflow-y-scroll p-6 flex flex-wrap gap-8 justify-center bg-gradient-to-b from-black via-[#0a0014] to-black">
-
-      {/* Particle Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        {particles.map((p) => (
-          <motion.div
-            key={p.id}
-            initial={{ opacity: 0, y: 0 }}
-            animate={{ opacity: [0, 1, 0], y: [0, -20, 0] }}
-            transition={{
-              delay: p.delay,
-              duration: 6 + Math.random() * 4,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-            className="absolute rounded-full bg-purple-500"
-            style={{
-              width: p.size,
-              height: p.size,
-              top: `${p.y}%`,
-              left: `${p.x}%`,
-              filter: 'blur(1px)',
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Left Column - AI Image Generator Form */}
+      {/* FORM */}
       <motion.form
         onSubmit={onSubmitHandler}
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: 'easeOut' }}
-        className="relative w-full max-w-lg p-6 bg-black/20 backdrop-blur-xl border border-white/20 rounded-2xl text-white shadow-lg z-10"
+        className="w-full max-w-lg p-6 bg-black/20 backdrop-blur-xl border rounded-2xl text-white"
       >
         <div className="flex items-center gap-3">
-          <Sparkles className="w-6 text-[#a855f7]" />
-          <h1 className="text-2xl font-semibold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent">
-            AI Image Generator
-          </h1>
+          <Sparkles className="text-purple-400" />
+          <h1 className="text-2xl font-semibold">AI Image Generator</h1>
         </div>
 
-        <p className="mt-6 text-sm font-medium">Describe Your Image</p>
         <textarea
-          className="w-full p-2 px-3 mt-2 outline-none text-sm rounded-lg border border-gray-400 bg-black/30 placeholder-gray-400 text-white focus:ring-1 focus:ring-purple-400"
-          placeholder="Describe what you want to see in image..." 
+          className="w-full mt-4 p-2 rounded bg-black border"
+          placeholder="Describe your image..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          rows={4}
-          required
         />
 
-        <p className="mt-4 text-sm font-medium">Style</p>
-        <div className="mt-3 flex gap-3 font-medium flex-wrap">
+        {/* STYLE */}
+        <div className="mt-4 flex gap-2 flex-wrap">
           {imageStyle.map((item) => (
             <span
-              onClick={() => setSelectedStyle(item)}
-              className={`text-xs px-4 py-1 border rounded-full cursor-pointer transition-all duration-300 ${
-                selectedStyle === item
-                  ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 text-white shadow-[0_0_10px_#a855f7]'
-                  : 'text-gray-400 border-gray-500 hover:bg-white/10 hover:text-white'
-              }`}
               key={item}
+              onClick={() => setSelectedStyle(item)}
+              className={`px-3 py-1 border rounded cursor-pointer ${
+                selectedStyle === item ? "bg-purple-500" : "text-gray-400"
+              }`}
             >
               {item}
             </span>
           ))}
         </div>
 
-        {/* Publish Toggle */}
-       <div className="my-6 flex items-center gap-3">
-  <label className="relative cursor-pointer">
-    <input
-      type="checkbox"
-      checked={publish}
-      onChange={(e) => setPublish(e.target.checked)}
-      className="sr-only peer"
-    />
-    {/* Track */}
-    <div className="w-12 h-6 bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500 rounded-full shadow-inner transition-all duration-500 peer-checked:from-green-400 peer-checked:via-green-500 peer-checked:to-green-600">
-    </div>
-    {/* Knob */}
-    <span className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-lg transition-transform duration-500 ease-in-out peer-checked:translate-x-6 peer-checked:shadow-[0_0_15px_#00ffea]"></span>
-  </label>
-  <p className="text-sm text-gray-200">Make this Image Public</p>
-</div>
+        {/* TOGGLE */}
+        <div className="mt-4 flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={publish}
+            onChange={(e) => setPublish(e.target.checked)}
+          />
+          <p className="text-sm">Make Public</p>
+        </div>
 
-        <button
-          type="submit"
-          className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#ff22e9] to-[#a065ff] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer shadow-lg hover:shadow-[0_0_20px_#ff22e9,0_0_30px_#a065ff] transition-all duration-300"
-        >
-          Generate Image
+        <button className="w-full mt-6 bg-purple-600 py-2 rounded">
+          {loading ? "Generating..." : "Generate Images"}
         </button>
       </motion.form>
 
-      {/* Right Column - Generated Image */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: 'easeOut', delay: 0.2 }}
-        className="relative w-full max-w-lg p-6 bg-black/20 backdrop-blur-xl border border-white/20 rounded-2xl text-white shadow-lg flex flex-col min-h-[400px] justify-center items-center z-10"
-      >
-        {/* Centered Image Icon */}
-        <Image className="w-16 h-16 mb-4 text-[#a855f7]" />
+      {/* OUTPUT */}
+      <div className="w-full max-w-lg p-6 bg-black/20 rounded-2xl text-white text-center">
+        <h2 className="text-xl mb-4 flex items-center justify-center gap-2">
+          <Image /> Generated Images
+        </h2>
 
-        <h1 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent text-center">
-          Generated Image
-        </h1>
-
-        <div className="flex-1 flex justify-center items-center">
-          <p className="text-center text-gray-400">
-            {generatedImage
-              ? generatedImage
-              : 'Enter a description and click "Generate Image" to get started.'}
+        {loading ? (
+          <p className="animate-pulse text-purple-400">
+            🎨 AI is generating images...
           </p>
-        </div>
-      </motion.div>
+        ) : images.length > 0 ? (
+          <div className="grid grid-cols-2 gap-3">
+            {images.map((img, i) => (
+              <div key={i} className="relative group">
+                <img
+                  src={img}
+                  onError={(e) => {
+                    e.target.src = "https://picsum.photos/800/500";
+                  }}
+                  className="rounded-lg hover:scale-105 transition"
+                />
+
+                {/* 🔽 Download Button */}
+                <button
+                  onClick={() => downloadImage(img, i)}
+                  className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition"
+                >
+                  ⬇ Download
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-400">Enter a prompt and generate images</p>
+        )}
+
+        {/* 🔄 REGENERATE */}
+        {images.length > 0 && (
+          <button
+            onClick={onSubmitHandler}
+            className="mt-4 bg-purple-500 px-4 py-1 rounded"
+          >
+            🔄 Regenerate
+          </button>
+        )}
+      </div>
     </div>
   );
 };
