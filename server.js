@@ -1,35 +1,58 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
-import pool from './confgs/db.js'; 
-import { clerkMiddleware, requireAuth} from '@clerk/express'
+import pool from './confgs/db.js';
+import { clerkMiddleware } from '@clerk/express';
 import aiRouter from './routes/aiRoutes.js';
 
 const app = express();
 
-app.use(cors());
+// ✅ Middlewares
+app.use(cors({
+  origin: "http://localhost:5173", // frontend URL (Vite default)
+  credentials: true
+}));
 app.use(express.json());
-app.use(clerkMiddleware())
+app.use(clerkMiddleware());
 
-app.get('/', (req, res) => res.send('Server is Live'));
+// ✅ Basic route
+app.get('/', (req, res) => {
+  res.send('Server is Live 🚀');
+});
 
-app.use(requireAuth())
-app.use('/api/ai',aiRouter)
+// ✅ AI Routes
+app.use('/api/ai', aiRouter);
 
-
-// ✅ DB TEST ROUTE
+// ✅ DB Test Route
 app.get('/db-test', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
-    res.json(result.rows);
+    res.json({
+      success: true,
+      time: result.rows[0]
+    });
   } catch (err) {
-    console.log(err);
-    res.status(500).send('DB Error');
+    console.error("DB ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: 'Database connection failed'
+    });
   }
 });
 
+// ✅ Global Error Handler (VERY IMPORTANT)
+app.use((err, req, res, next) => {
+  console.error("GLOBAL ERROR:", err.stack);
+
+  res.status(500).json({
+    success: false,
+    message: "Something went wrong"
+  });
+});
+
+// ✅ Server Start
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log('Server is running on PORT', PORT);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
