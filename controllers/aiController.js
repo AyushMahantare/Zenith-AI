@@ -84,7 +84,7 @@ export const generateArticle = async (req, res) => {
     await pool.query(
       `INSERT INTO creations (user_id, prompt, content, type)
        VALUES ($1, $2, $3, $4)`,
-      [userId, prompt, content, "article",true]
+      [userId, prompt, content, "article"]
     );
 
     // ✅ Update usage
@@ -104,6 +104,7 @@ export const generateArticle = async (req, res) => {
 
   } catch (error) {
     console.log("ERROR:", error);
+    
     return res.status(500).json({
       success: false,
       message: "Server error",
@@ -117,13 +118,17 @@ export const generateBlogTitles = async (req, res) => {
     const { userId } = req.auth();
     const { prompt } = req.body;
 
+    if (!userId) {
+      return res.status(401).json({ success: false });
+    }
+
     const styles = [
       `Top 10 Powerful Facts About ${prompt}`,
       `Why ${prompt} Will Change Everything`,
       `The Ultimate Guide to ${prompt}`,
       `7 Shocking Truths About ${prompt}`,
       `How ${prompt} Is Transforming The World`,
-      `Beginner’s Guide to ${prompt}`,
+      `Beginner's Guide to ${prompt}`,
       `Is ${prompt} The Future?`,
       `${prompt}: What Nobody Tells You`,
     ];
@@ -135,14 +140,14 @@ export const generateBlogTitles = async (req, res) => {
     await pool.query(
       `INSERT INTO creations (user_id, prompt, content, type)
        VALUES ($1, $2, $3, $4)`,
-      [userId, prompt, JSON.stringify(titles), "blog_titles", true]
+      [userId, prompt, JSON.stringify(titles), "blog_titles"]
     );
 
     res.json({ success: true, titles });
 
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ success: false });
+    console.log("BLOG TITLES ERROR:", err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -151,6 +156,10 @@ export const generateImage = async (req, res) => {
   try {
     const { userId } = req.auth();
     const { prompt } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ success: false });
+    }
 
     if (!prompt) {
       return res.json({
@@ -215,7 +224,7 @@ export const generateImage = async (req, res) => {
     await pool.query(
       `INSERT INTO creations (user_id, prompt, content, type)
        VALUES ($1, $2, $3, $4)`,
-      [userId, prompt, JSON.stringify(images), "image",true]
+      [userId, prompt, JSON.stringify(images), "image"]
     );
 
     return res.json({
@@ -225,7 +234,7 @@ export const generateImage = async (req, res) => {
 
   } catch (err) {
     console.log("IMAGE ERROR:", err);
-    return res.status(500).json({ success: false });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -233,6 +242,11 @@ export const generateImage = async (req, res) => {
 export const removeBackground = async (req, res) => {
   try {
     const { userId } = req.auth();
+
+    // ✅ FIX: Check if userId exists
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Not authenticated" });
+    }
 
     // ⏳ Fake processing delay
     await new Promise((r) => setTimeout(r, 1500));
@@ -245,7 +259,7 @@ export const removeBackground = async (req, res) => {
     await pool.query(
       `INSERT INTO creations (user_id, prompt, content, type)
        VALUES ($1, $2, $3, $4)`,
-      [userId, "remove-bg", image, "remove_bg",true]
+      [userId, "remove-bg", image, "remove_bg"]
     );
 
     res.json({
@@ -254,8 +268,8 @@ export const removeBackground = async (req, res) => {
     });
 
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ success: false });
+    console.log("REMOVE BG ERROR:", err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -263,6 +277,12 @@ export const removeBackground = async (req, res) => {
 export const removeObject = async (req, res) => {
   try {
     const { userId } = req.auth();
+
+    // ✅ FIX: Check if userId exists
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Not authenticated" });
+    }
+
     const { prompt } = req.body;
 
     // ⏳ fake delay
@@ -272,7 +292,7 @@ export const removeObject = async (req, res) => {
     await pool.query(
       `INSERT INTO creations (user_id, prompt, content, type)
        VALUES ($1, $2, $3, $4)`,
-      [userId, prompt || "remove-object", "interaction-based", "remove_object",true]
+      [userId, prompt || "remove-object", "interaction-based", "remove_object"]
     );
 
     // ✅ IMPORTANT: no image return
@@ -282,14 +302,19 @@ export const removeObject = async (req, res) => {
 
   } catch (err) {
     console.log("REMOVE OBJECT ERROR:", err);
-    return res.status(500).json({ success: false });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 // ================= RESUME REVIEW =================
 export const reviewResume = async (req, res) => {
   try {
     const { userId } = req.auth();
     const { text } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ success: false });
+    }
 
     if (!text) {
       return res.json({ success: false });
@@ -346,7 +371,7 @@ export const reviewResume = async (req, res) => {
     await pool.query(
       `INSERT INTO creations (user_id, prompt, content, type)
        VALUES ($1, $2, $3, $4)`,
-      [userId, "resume-analysis", JSON.stringify(result), "resume_review",true]
+      [userId, "resume-analysis", JSON.stringify(result), "resume_review"]
     );
 
     await new Promise((r) => setTimeout(r, 1200));
@@ -354,19 +379,31 @@ export const reviewResume = async (req, res) => {
     res.json({ success: true, result });
 
   } catch (err) {
-    res.status(500).json({ success: false });
+    console.log("RESUME REVIEW ERROR:", err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
+// ================= TOGGLE LIKE =================
 export const toggleLike = async (req, res) => {
   try {
     const { userId } = req.auth();
     const { id } = req.params;
 
+    // ✅ FIX: Check if userId exists
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Not authenticated" });
+    }
+
+    // ✅ FIX: Check if post exists before accessing
     const post = await pool.query(
       "SELECT likes FROM creations WHERE id=$1",
       [id]
     );
+
+    if (!post.rows || post.rows.length === 0) {
+      return res.status(404).json({ success: false, message: "Post not found" });
+    }
 
     let likes = post.rows[0].likes || [];
 
@@ -384,23 +421,26 @@ export const toggleLike = async (req, res) => {
     res.json({ success: true, likes });
 
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ success: false });
+    console.log("TOGGLE LIKE ERROR:", err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
+// ================= GET COMMUNITY POSTS =================
 export const getCommunityPosts = async (req, res) => {
   try {
+    // ✅ FIX: Add try-catch wrapper
     const result = await pool.query(
       "SELECT * FROM creations ORDER BY created_at DESC"
     );
 
     res.json({
       success: true,
-      posts: result.rows,
+      posts: result.rows || [],
     });
 
   } catch (err) {
-    res.status(500).json({ success: false });
+    console.log("GET COMMUNITY POSTS ERROR:", err);
+    res.status(500).json({ success: false, message: "Failed to fetch posts" });
   }
 };

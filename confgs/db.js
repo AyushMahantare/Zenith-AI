@@ -1,4 +1,4 @@
-import pkg from 'pg';
+import pkg from "pg";
 const { Pool } = pkg;
 
 const pool = new Pool({
@@ -6,6 +6,7 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false,
   },
+  family: 4, // 🔥 FORCE IPv4
 });
 
 export default pool;
